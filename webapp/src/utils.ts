@@ -231,6 +231,46 @@ class Utils {
 
         return result
     }
+
+    static isMobile(): boolean {
+        const toMatch = [
+            /Android/i,
+            /webOS/i,
+            /iPhone/i,
+            /iPad/i,
+            /iPod/i,
+            /BlackBerry/i,
+            /Windows Phone/i,
+        ]
+
+        return toMatch.some((toMatchItem) => {
+            return navigator.userAgent.match(toMatchItem)
+        })
+    }
+
+    static getBaseURL(absolute?: boolean): string {
+        let baseURL = (window as any).baseURL || ''
+        baseURL = baseURL.replace(/\/+$/, '')
+        if (baseURL.indexOf('/') === 0) {
+            baseURL = baseURL.slice(1)
+        }
+        if (absolute) {
+            return window.location.origin + '/' + baseURL
+        }
+        return baseURL
+    }
+
+    static buildURL(path: string, absolute?: boolean): string {
+        const baseURL = this.getBaseURL()
+        let finalPath = baseURL + path
+        if (path.indexOf('/') !== 0) {
+            finalPath = baseURL + '/' + path
+        }
+        if (absolute) {
+            return window.location.origin + '/' + finalPath
+        }
+        return finalPath
+    }
 }
 
 export {Utils}

@@ -33,6 +33,11 @@ class ViewController:
 		NotificationCenter.default.addObserver(self, selector: #selector(onServerStarted), name: AppDelegate.serverStartedNotification, object: nil)
 	}
 
+	override func viewDidAppear() {
+		super.viewDidAppear()
+		self.view.window?.makeFirstResponder(self.webView)
+	}
+
 	override var representedObject: Any? {
 		didSet {
 			// Update the view, if already loaded.
@@ -43,6 +48,17 @@ class ViewController:
 		let websiteDataTypes = NSSet(array: [WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeMemoryCache])
 		let date = Date(timeIntervalSince1970: 0)
 		WKWebsiteDataStore.default().removeData(ofTypes: websiteDataTypes as! Set<String>, modifiedSince: date, completionHandler:{ })
+	}
+
+	@IBAction func showDiagnosticsInfo(_ sender: NSObject) {
+		let appDelegate = NSApplication.shared.delegate as! AppDelegate
+
+		let alert: NSAlert = NSAlert()
+		alert.messageText = "Diagnostics info"
+		alert.informativeText = "Port: \(appDelegate.serverPort)"
+		alert.alertStyle = .informational
+		alert.addButton(withTitle: "OK")
+		alert.runModal()
 	}
 
 	@objc func onServerStarted() {
@@ -56,7 +72,7 @@ class ViewController:
 	private func updateSessionToken() {
 		let appDelegate = NSApplication.shared.delegate as! AppDelegate
 		let script = WKUserScript(
-			source: "localStorage.setItem('sessionId', '\(appDelegate.sessionToken)');",
+			source: "localStorage.setItem('focalboardSessionId', '\(appDelegate.sessionToken)');",
 			injectionTime: .atDocumentStart,
 			forMainFrameOnly: true
 		)
